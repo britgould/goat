@@ -20,6 +20,7 @@ sleep(5)
 print("And back to middle")
 servo.mid()
 sleep(5)
+
 print("Now with angles")
 print("Go to -90")
 servo.angle = -90
