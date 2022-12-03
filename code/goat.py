@@ -41,13 +41,15 @@ def shutdown():
     logging.debug('GOAT shutdown complete.')
 
 
+def runGoat():
+    while True:
+        detectionResult = detect.detectTrash()
+    
 
 def main():
     try:
         initialize()
-    
-        while True:
-          detectionResult = detect.detectTrash()
+        runGoat()
 
     finally:
         shutdown()
