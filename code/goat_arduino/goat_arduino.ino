@@ -66,7 +66,7 @@ bool ParseMessage(String message) {
   } else if (strCommand == "move") {
     serialMessage.command = MOVE;
   } else {
-    Serial.println("ERROR: Invalid command: " + strCommand);
+    Serial.println("ERROR: Invalid command:" + strCommand);
     return false;
   }
 
@@ -92,7 +92,7 @@ bool ParseMessage(String message) {
         } else if (strParameter == "grab") {
           serialMessage.parameter = GRAB;
         } else {
-          Serial.println("ERROR: Command: " + strCommand + " Invalid parameter: " + strParameter);
+          Serial.println("ERROR: Command:" + strCommand + ", invalid parameter:" + strParameter);
           return false;
         }
         break;
@@ -110,7 +110,7 @@ bool ParseMessage(String message) {
         } else if (strParameter == "rotateLeft") {
           serialMessage.parameter = ROTATELEFT;
         } else {
-          Serial.println("ERROR: Command: " + strCommand + " Invalid parameter: " + strParameter);
+          Serial.println("ERROR: Command:" + strCommand + ", invalid parameter: " + strParameter);
           return false;
         }
         break;
@@ -190,7 +190,7 @@ void loop() {
   if (Serial.available() > 0) {
     serialData = Serial.readStringUntil('\n'); // read a line from the serial port
 
-    if (ParseMessage(serialData) {
+    if (ParseMessage(serialData)) {
       PerformCommand(serialMessage);
     }
 

@@ -7,13 +7,13 @@ import logging
 
 
 def initialize():
-  logging.debug('arm initializing...')
-  
-  logging.info('arm initialized.')
-  return True
+    logging.debug('arm initializing...')
+
+    logging.info('arm initialized.')
+    return True
 
 
 def shutdown():
-  logging.debug('arm shutting down...')
-  
-  logging.info('arm shut down.')
+    logging.debug('arm shutting down...')
+
+    logging.info('arm shut down complete.')

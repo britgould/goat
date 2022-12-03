@@ -7,13 +7,13 @@ import logging
 
 
 def initialize():
-  logging.debug('comms initializing...')
-  
-  logging.info('comms initialized.')
-  return True
+    logging.debug('comms initializing...')
+
+    logging.info('comms initialized.')
+    return True
 
 
 def shutdown():
-  logging.debug('comms shutting down...')
-  
-  logging.info('comms shut down.')
+    logging.debug('comms shutting down...')
+
+    logging.info('comms shut down complete.')

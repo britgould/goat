@@ -16,34 +16,41 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(module)s : %(funcNam
 
 
 def initialize():
-  logging.debug('GOAT initializing...')
-  if not detect.initialize():
-    logging.critical('detect failed to initialize.')
-    sys.exit('Initialization failure')
-  if not comms.initialize():
-    logging.critical('comms failed to initialize.')
-    sys.exit('Initialization failure')
-  if not arm.initialize():
-    logging.critical('arm failed to initialize.')
-    sys.exit('Initialization failure')
-  if not motion.initialize():
-    logging.critical('motion failed to initialize.')
-    sys.exit('Initialization failure')
-  logging.info('GOAT initialized.')
+    logging.debug('GOAT initializing...')
+    if not detect.initialize():
+        logging.critical('detect failed to initialize.')
+        sys.exit('Initialization failure')
+    if not comms.initialize():
+        logging.critical('comms failed to initialize.')
+        sys.exit('Initialization failure')
+    if not arm.initialize():
+        logging.critical('arm failed to initialize.')
+        sys.exit('Initialization failure')
+    if not motion.initialize():
+        logging.critical('motion failed to initialize.')
+        sys.exit('Initialization failure')
+    logging.info('GOAT initialized.')
 
-def main():
-  try:
-    initialize()
-    
-    while True:
-      detectionResult = detect.detectTrash()
-  
-  finally:
+
+def shutdown():
+    logging.debug('GOAT shuting down...')
     motion.shutdown()
     arm.shutdown()
     comms.shutdown()
     detect.shutdown()
+    logging.debug('GOAT shutdown complete.')
 
+
+
+def main():
+    try:
+        initialize()
+    
+        while True:
+          detectionResult = detect.detectTrash()
+
+    finally:
+        shutdown()
 
 if __name__ == '__main__':
-  main()
+    main()
