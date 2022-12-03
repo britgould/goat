@@ -9,6 +9,7 @@
 
 import argparse
 import sys
+import logging
 
 import cv2
 from tflite_support.task import core

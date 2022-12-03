@@ -3,6 +3,9 @@
 # Licensed under ...
 #
 
+import logging
+
+
 def initialize():
   logging.debug('arm initializing...')
   
