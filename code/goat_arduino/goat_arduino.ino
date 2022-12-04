@@ -50,67 +50,67 @@ struct Message serialMessage;
 // parse the incoming message
 bool ParseMessage(String message) {
   int space1, space2;
-  String strCommand, strParameter;
+  String commandString, parameterString;
 
   // split the components of the message in the incoming string
   space1 = message.indexOf(" ");
   space2 = message.lastIndexOf(" ");
-  strCommand = message.substring(0, space1);
-  strParameter = message.substring(space1 + 1, space2);
+  commandString = message.substring(0, space1);
+  parameterString = message.substring(space1 + 1, space2);
 
   // parse the command
-  if (strCommand == "arm") {
+  if (commandString == "arm") {
     serialMessage.command = ARM;
-  } else if (strCommand == "armPW") {
+  } else if (commandString == "armPW") {
     serialMessage.command = ARMPW;
-  } else if (strCommand == "move") {
+  } else if (commandString == "move") {
     serialMessage.command = MOVE;
   } else {
-    Serial.println("ERROR: Invalid command:" + strCommand);
+    Serial.println("ERROR: Invalid command:" + commandString);
     return false;
   }
 
   // parse the parameter
-  if (strParameter == "initialize") {
+  if (parameterString == "initialize") {
     serialMessage.parameter = INITIALIZE;
-  } else if (strParameter == "shutdown") {
+  } else if (parameterString == "shutdown") {
     serialMessage.parameter = SHUTDOWN;
   } else {
     switch (serialMessage.command) {
       case ARM:
       case ARMPW:
-        if (strParameter == "waist") {
+        if (parameterString == "waist") {
           serialMessage.parameter = WAIST;
-        } else if (strParameter == "shoulder") {
+        } else if (parameterString == "shoulder") {
           serialMessage.parameter = SHOULDER;
-        } else if (strParameter == "elbow") {
+        } else if (parameterString == "elbow") {
           serialMessage.parameter = ELBOW;
-        } else if (strParameter == "wrist") {
+        } else if (parameterString == "wrist") {
           serialMessage.parameter = WRIST;
-        } else if (strParameter == "twist") {
+        } else if (parameterString == "twist") {
           serialMessage.parameter = TWIST;
-        } else if (strParameter == "grab") {
+        } else if (parameterString == "grab") {
           serialMessage.parameter = GRAB;
         } else {
-          Serial.println("ERROR: Command:" + strCommand + ", invalid parameter:" + strParameter);
+          Serial.println("ERROR: Command:" + commandString + ", invalid parameter:" + parameterString);
           return false;
         }
         break;
       case MOVE:
-        if (strParameter == "forward") {
+        if (parameterString == "forward") {
           serialMessage.parameter = FORWARD;
-        } else if (strParameter == "backward") {
+        } else if (parameterString == "backward") {
           serialMessage.parameter = BACKWARD;
-        } else if (strParameter == "left") {
+        } else if (parameterString == "left") {
           serialMessage.parameter = LEFT;
-        } else if (strParameter == "right") {
+        } else if (parameterString == "right") {
           serialMessage.parameter = RIGHT;
-        } else if (strParameter == "rotateRight") {
+        } else if (parameterString == "rotateRight") {
           serialMessage.parameter = ROTATERIGHT;
-        } else if (strParameter == "rotateLeft") {
+        } else if (parameterString == "rotateLeft") {
           serialMessage.parameter = ROTATELEFT;
         } else {
-          Serial.println("ERROR: Command:" + strCommand + ", invalid parameter: " + strParameter);
+          Serial.println("ERROR: Command:" + commandString + ", invalid parameter: " + parameterString);
           return false;
         }
         break;
