@@ -223,8 +223,7 @@ bool PerformCommand(Message message) {
 void setup() {
   // open up the serial port
   Serial.begin(9600);
-  Serial.println("");
-  Serial.println("");
+  Serial.println("setup()");
 }
 
 void loop() {
