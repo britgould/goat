@@ -7,12 +7,12 @@
 
 #include <Servo.h>
 
-#define SERVO_WAIST_PIN 20
-#define SERVO_SHOULDER_PIN 22
-#define SERVO_ELBOW_PIN 24
-#define SERVO_WRIST_PIN 26
-#define SERVO_TWIST_PIN 28
-#define SERVO_GRAB_PIN 30
+#define SERVO_WAIST_PIN 22
+#define SERVO_SHOULDER_PIN 24
+#define SERVO_ELBOW_PIN 26
+#define SERVO_WRIST_PIN 28
+#define SERVO_TWIST_PIN 30
+#define SERVO_GRAB_PIN 32
 
 #define SERVO_MOVE_DELAY 25
 #define SERVO_NOT_INITIALIZED -1
@@ -22,13 +22,14 @@ Servo servoWaist, servoShoulder, servoElbow, servoWrist, servoTwist, servoGrab;
 bool servosInitialized = false;
 bool motorsInitialized = false;
 
-struct ServoPositions {  // replace these with the starting positions
-  int waist = SERVO_NOT_INITIALIZED;
-  int shoulder = SERVO_NOT_INITIALIZED;
-  int elbow = SERVO_NOT_INITIALIZED;
-  int wrist = SERVO_NOT_INITIALIZED;
-  int twist = SERVO_NOT_INITIALIZED;
-  int grab = SERVO_NOT_INITIALIZED;
+// initial servo positions
+struct ServoPositions {
+  int waist = 90;
+  int shoulder = 70;
+  int elbow = 0;
+  int wrist = 0;
+  int twist = 90;
+  int grab = 90;
 };
 
 struct ServoPositions servoInitialPositions;
@@ -37,7 +38,7 @@ struct ServoPositions servoInitialPositions;
 String serialData;
 
 typedef enum {NO_COMMAND, ARM, ARMPW, MOVE} COMMAND;
-typedef enum {NO_PARAMETER, INITIALIZE, SHUTDOWN, WAIST, SHOULDER, ELBOW, WRIST, TWIST, GRAB, FORWARD, BACKWARD, LEFT, RIGHT, ROTATERIGHT, ROTATELEFT} PARAMETER;
+typedef enum {NO_PARAMETER, INITIALIZE, SHUTDOWN, REST, UP, WAIST, SHOULDER, ELBOW, WRIST, TWIST, GRAB, FORWARD, BACKWARD, LEFT, RIGHT, ROTATERIGHT, ROTATELEFT} PARAMETER;
 
 struct Message {
   COMMAND command = NO_COMMAND;
@@ -79,7 +80,11 @@ bool ParseMessage(String message) {
     switch (serialMessage.command) {
       case ARM:
       case ARMPW:
-        if (parameterString == "waist") {
+        if (parameterString == "rest") {
+          serialMessage.parameter = REST;
+        } else if (parameterString == "up") {
+          serialMessage.parameter = UP;
+        } else if (parameterString == "waist") {
           serialMessage.parameter = WAIST;
         } else if (parameterString == "shoulder") {
           serialMessage.parameter = SHOULDER;
@@ -143,17 +148,17 @@ bool InitializeServos(void) {
   if (!servosInitialized) {
     // attach servos
     servoWaist.attach(SERVO_WAIST_PIN, 500, 2400);
-    servoWaist.write(90);
+    servoWaist.write(servoInitialPositions.waist);
     servoShoulder.attach(SERVO_SHOULDER_PIN, 500, 2400);
-    servoShoulder.write(70);
+    servoShoulder.write(servoInitialPositions.shoulder);
     servoElbow.attach(SERVO_ELBOW_PIN, 500, 2400);
-    servoElbow.write(0);
+    servoElbow.write(servoInitialPositions.elbow);
     servoWrist.attach(SERVO_WRIST_PIN, 500, 2400);
-    servoWrist.write(0);
+    servoWrist.write(servoInitialPositions.wrist);
     servoTwist.attach(SERVO_TWIST_PIN, 600, 2600);
-    servoTwist.write(90);
+    servoTwist.write(servoInitialPositions.twist);
     servoGrab.attach(SERVO_GRAB_PIN, 600, 2600);
-    servoGrab.write(90);
+    servoGrab.write(servoInitialPositions.grab);
 
     Serial.println("DEBUG: Servos initialized");
     servosInitialized = true;
@@ -162,14 +167,19 @@ bool InitializeServos(void) {
   return true;
 }
 
+void ServosToRestPositions(void) {
+  ServoMoveTo(servoWaist, servoInitialPositions.waist);
+  ServoMoveTo(servoShoulder, servoInitialPositions.shoulder);
+  ServoMoveTo(servoElbow, servoInitialPositions.elbow);
+  ServoMoveTo(servoWrist, servoInitialPositions.wrist);
+  ServoMoveTo(servoTwist, servoInitialPositions.twist);
+  ServoMoveTo(servoGrab, servoInitialPositions.grab);
+  return;  
+}
+
 bool ShutdownServos(void) {
   if (servosInitialized) {
-    ServoMoveTo(servoWaist, 90);
-    ServoMoveTo(servoShoulder, 70);
-    ServoMoveTo(servoElbow, 0);
-    ServoMoveTo(servoWrist, 0);
-    ServoMoveTo(servoTwist, 90);
-    ServoMoveTo(servoGrab, 90);
+    ServosToRestPositions();
     delay(3000);
     servoWaist.detach();
     servoShoulder.detach();
@@ -186,9 +196,6 @@ bool ShutdownServos(void) {
 
 bool PerformCommand(Message message) {
   Serial.println("in PerformCommand()");
-  Serial.println("command: " + String(message.command));
-  Serial.println("parameter: " + String(message.parameter));
-  Serial.println("value: " + String(message.value));
 
   switch (message.parameter) {
     case INITIALIZE:
@@ -196,6 +203,13 @@ bool PerformCommand(Message message) {
       break;
     case SHUTDOWN:
       ShutdownServos();
+      break;
+    case REST:
+      ServosToRestPositions();
+      break;
+    case UP:
+      // put arm straight up -- TO BE CODED
+      Serial.println("arm up NOT implemented yet");
       break;
     case WAIST:
       ServoMoveTo(servoWaist, message.value);
@@ -223,7 +237,8 @@ bool PerformCommand(Message message) {
 void setup() {
   // open up the serial port
   Serial.begin(9600);
-  Serial.println("setup()");
+  Serial.println("");
+  Serial.println("Setup complete");
 }
 
 void loop() {
@@ -232,13 +247,16 @@ void loop() {
 
     bool messageParsedSuccessfully;
     messageParsedSuccessfully = ParseMessage(serialData);
+
+    Serial.println("Message parsed successfully: " + String(messageParsedSuccessfully));
+    Serial.println("command: " + String(serialMessage.command));
+    Serial.println("parameter: " + String(serialMessage.parameter));
+    Serial.println("value: " + String(serialMessage.value));
+    
     if (messageParsedSuccessfully) {
       PerformCommand(serialMessage);
     }
 
-    Serial.println("command: " + String(serialMessage.command));
-    Serial.println("parameter: " + String(serialMessage.parameter));
-    Serial.println("value: " + String(serialMessage.value));
 /*
     if (serialData.startsWith("us")) {
       servo1.writeMicroseconds(serialData.substring(2).toInt());
