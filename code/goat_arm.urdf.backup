@@ -1,18 +1,17 @@
 <robot name="robot_arm">
   <link name="base_link">
     <visual>
-      <origin xyz="0 0 6.65" rpy="0 0 0"/>
+      <origin xyz="0 0 0.0225" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="13.3" radius="5.0"/>
+        <cylinder length="0.050" radius="0.089"/>
       </geometry>
     </visual>
   </link>
 
   <link name="base_rotator">
     <visual>
-      <origin xyz="0 0 1.85" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="3.7" radius="2.0"/>
+        <box size="0.05 0.05 0.053" />
       </geometry>
     </visual>
   </link>
@@ -20,15 +19,15 @@
   <joint name="base_joint" type="revolute">
     <parent link="base_link"/>
     <child link="base_rotator"/>
-    <origin xyz="0 0 15.15" rpy="0 0 0" />
+    <origin xyz="0 0 0.072" rpy="0 0 0" />
     <axis xyz="0 0 -1"/>
   </joint>
 
   <link name="upper_arm">
     <visual>
-      <origin xyz="0 0 12.65" rpy="0 0 0" />
+      <origin xyz="0 0 0.119" rpy="0 0 0" />
       <geometry>
-        <cylinder length="25.3" radius="2.0"/>
+        <cylinder length="0.238" radius="0.022"/>
       </geometry>
     </visual>
   </link>
@@ -36,16 +35,16 @@
   <joint name="shoulder_joint" type="revolute">
     <parent link="base_rotator"/>
     <child link="upper_arm"/>
-    <origin xyz="0 0 16.35" rpy="0 0 0" />
-    <axis xyz="0 1 0"/>
+    <origin xyz="0 0 0.027" rpy="0 0 0" />
+    <axis xyz="1 0 0"/>
     <limit lower="-1.57" upper="1.57" />
   </joint>
 
   <link name="forearm">
     <visual>
-      <origin xyz="0 0 6.0" rpy="0 0 0" />
+      <origin xyz="0 0 0.075" rpy="0 0 0" />
       <geometry>
-        <cylinder length="12.0" radius="2.0"/>
+        <cylinder length="0.150" radius="0.0175"/>
       </geometry>
     </visual>
   </link>
@@ -53,16 +52,16 @@
   <joint name="elbow_joint" type="revolute">
     <parent link="upper_arm"/>
     <child link="forearm"/>
-    <origin xyz="0 0 31.3" rpy="0 0 0" />
-    <axis xyz="0 1 0"/>
+    <origin xyz="0 0 0.238" rpy="0 0 0" />
+    <axis xyz="1 0 0"/>
     <limit lower="-1.92" upper="1.92" />
   </joint>
 
   <link name="hand">
     <visual>
-      <origin xyz="0 0 3.85" rpy="0 0 0" />
+      <origin xyz="0 0 0.0225" rpy="0 0 0" />
       <geometry>
-        <cylinder length="7.7" radius="2.0"/>
+        <box size="0.09 0.03 0.045" />
       </geometry>
     </visual>
   </link>
@@ -70,16 +69,16 @@
   <joint name="wrist_joint" type="revolute">
     <parent link="forearm"/>
     <child link="hand"/>
-    <origin xyz="0 0 15.85" rpy="0 0 0" />
-    <axis xyz="0 1 0"/>
+    <origin xyz="0 0 0.15" rpy="0 0 0" />
+    <axis xyz="0 0 -1"/>
     <limit lower="-1.57" upper="2.8" />
   </joint>
 
   <link name="fingers">
     <visual>
-      <origin xyz="0 0 7.0" rpy="0 0 0" />
+      <origin xyz="0 0 0.02" rpy="0 0 0" />
       <geometry>
-        <cylinder length="14.0" radius="2.0"/>
+        <cylinder length="0.045" radius="0.04"/>
       </geometry>
     </visual>
   </link>
@@ -87,9 +86,9 @@
   <joint name="twist_joint" type="revolute">
     <parent link="hand"/>
     <child link="fingers"/>
-    <origin xyz="0 0 14.7" rpy="0 0 0" />
-    <axis xyz="0 0 1"/>
-    <limit lower="-0.01" upper="0.01" />
+    <origin xyz="0 0 0.045" rpy="0 0 0" />
+    <axis xyz="-1 0 0"/>
+    <limit lower="-1.78" upper="0.48" />
    </joint>
 
 </robot>
