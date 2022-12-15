@@ -8,7 +8,7 @@
     </visual>
   </link>
 
-  <link name="base_rotator">
+  <link name="rotator">
     <visual>
       <origin xyz="0 0 1.85" rpy="0 0 0"/>
       <geometry>
@@ -19,24 +19,24 @@
 
   <joint name="base_joint" type="revolute">
     <parent link="base_link"/>
-    <child link="base_rotator"/>
-    <origin xyz="0 0 15.15" rpy="0 0 0" />
-    <axis xyz="0 0 -1"/>
+    <child link="rotator"/>
+    <origin xyz="0 0 13.3" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
   </joint>
 
   <link name="upper_arm">
     <visual>
-      <origin xyz="0 0 12.65" rpy="0 0 0" />
+      <origin xyz="0 0 6.0" rpy="0 0 0" />
       <geometry>
-        <cylinder length="25.3" radius="2.0"/>
+        <cylinder length="12.0" radius="2.0"/>
       </geometry>
     </visual>
   </link>
 
   <joint name="shoulder_joint" type="revolute">
-    <parent link="base_rotator"/>
+    <parent link="rotator"/>
     <child link="upper_arm"/>
-    <origin xyz="0 0 16.35" rpy="0 0 0" />
+    <origin xyz="0 0 3.7" rpy="0 0 0" />
     <axis xyz="0 1 0"/>
     <limit lower="-1.57" upper="1.57" />
   </joint>
@@ -53,9 +53,9 @@
   <joint name="elbow_joint" type="revolute">
     <parent link="upper_arm"/>
     <child link="forearm"/>
-    <origin xyz="0 0 31.3" rpy="0 0 0" />
+    <origin xyz="0 0 12.0" rpy="0 0 0" />
     <axis xyz="0 1 0"/>
-    <limit lower="-1.92" upper="1.92" />
+    <limit lower="-1.57" upper="1.57" />
   </joint>
 
   <link name="hand">
@@ -70,9 +70,9 @@
   <joint name="wrist_joint" type="revolute">
     <parent link="forearm"/>
     <child link="hand"/>
-    <origin xyz="0 0 15.85" rpy="0 0 0" />
+    <origin xyz="0 0 12.0" rpy="0 0 0" />
     <axis xyz="0 1 0"/>
-    <limit lower="-1.57" upper="2.8" />
+    <limit lower="-1.57" upper="1.57" />
   </joint>
 
   <link name="fingers">
@@ -87,7 +87,24 @@
   <joint name="twist_joint" type="revolute">
     <parent link="hand"/>
     <child link="fingers"/>
-    <origin xyz="0 0 14.7" rpy="0 0 0" />
+    <origin xyz="0 0 7.7" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.01" upper="0.01" />
+   </joint>
+
+  <link name="fingertips">
+    <visual>
+      <origin xyz="0 0 0.025" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.05" radius="2.0"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="last_joint" type="revolute">
+    <parent link="fingers"/>
+    <child link="fingertips"/>
+    <origin xyz="0 0 7.0" rpy="0 0 0" />
     <axis xyz="0 0 1"/>
     <limit lower="-0.01" upper="0.01" />
    </joint>
