@@ -12,7 +12,7 @@ import comms
 import arm
 import motion
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(module)s : %(funcName)s : %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.DEBUG)
 
 
 def initialize():

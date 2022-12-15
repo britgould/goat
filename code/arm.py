@@ -3,6 +3,7 @@
 # Licensed under ...
 #
 
+import comms
 import logging
 
 import ikpy.chain
@@ -29,8 +30,12 @@ def initialize():
     global ax
     fig, ax = plot_utils.init_3d_figure()
 
-    logging.info('arm initialized.')
-    return True
+    if not comms.sendCommand('arm', 'initialize', 0):
+        logging.critical('arm failed to initialize.')
+        return False
+    else:
+        logging.info('arm initialized.')
+        return True
 
 def doInverseKinematics():
     global inverseKinematics
@@ -43,11 +48,14 @@ def doInverseKinematics():
                                                     orientation_mode="all") #,
                                                     #initial_position=old_position)
     
-    print("The angles of each joints are : ", list(map(lambda r:math.degrees(r),inverseKinematics.tolist())))
-
+    debugString = "The angles of each joints are : ", list(map(lambda r:math.degrees(r),inverseKinematics.tolist()))
+    logging.debug(debugString)
+    
     computed_position = my_chain.forward_kinematics(inverseKinematics)
-    print("Computed position: %s, original position : %s" % (computed_position[:3, 3], target_position))
-    print("Computed position (readable) : %s" % [ '%.2f' % elem for elem in computed_position[:3, 3] ])
+    debugString = "Computed position: %s, original position : %s" % (computed_position[:3, 3], target_position)
+    logging.debug(debugString)
+    debugString = "Computed position (readable) : %s" % [ '%.2f' % elem for elem in computed_position[:3, 3] ]
+    logging.debug(debugString)
 
 def updatePlot():
     global fig
@@ -63,17 +71,23 @@ def updatePlot():
 
 def move(x, y, z):
     global target_position
+
     target_position = [x, y, z]
     doInverseKinematics()
     updatePlot()
+    
+    # ADD: send move command to Arduino
 
 def shutdown():
     logging.debug('arm shutting down...')
-
+    comms.sendCommand('arm', 'shutdown', 0)
     logging.info('arm shut down complete.')
 
-initialize()
 
-move(0, 0, 65)
-
-print('break here')
+# for debugging:
+if __name__ == '__main__':
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(module)s : %(funcName)s : %(message)s',
+                        level=logging.DEBUG)
+    initialize()
+    move(0, 0, 65)
+    print('breakpoint here')
