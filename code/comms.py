@@ -32,14 +32,14 @@ def sendCommand(command, parameter, value):
             logging.critical('serialComm is not open')
             return False
         else:
-            serialMessageToSend = command + ' ' + parameter + ' ' + string(value)
-            logging.debug(serialMessageToSend)
-            serialComm.write(serialMessageToSend.encode())
+            serialMessage = command + ' ' + parameter + ' ' + string(value) + '\n'
+            logging.debug(serialMessage)
+            serialComm.write(serialMessage.encode('utf-8'))
             
             while True:
                 while serialComm.inWaiting() == 0: pass
                 if serialComm.inWaiting() > 0:
-                    response = serialComm.readline()
+                    response = serialComm.readline().decode('utf-8').rstrip()
                     logging.debug('serial response: %s', response)
                     if response == 'OK':
                         return True
