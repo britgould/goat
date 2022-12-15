@@ -30,12 +30,7 @@ def initialize():
     global ax
     fig, ax = plot_utils.init_3d_figure()
 
-    if not comms.sendCommand('arm', 'initialize', 0):
-        logging.critical('arm failed to initialize.')
-        return False
-    else:
-        logging.info('arm initialized.')
-        return True
+    # send initialize command to Arduino
 
 def doInverseKinematics():
     global inverseKinematics
@@ -80,7 +75,7 @@ def move(x, y, z):
 
 def shutdown():
     logging.debug('arm shutting down...')
-    comms.sendCommand('arm', 'shutdown', 0)
+
     logging.info('arm shut down complete.')
 
 

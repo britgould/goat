@@ -32,8 +32,8 @@ def sendCommand(command, parameter, value):
             logging.critical('serialComm is not open')
             return False
         else:
-            serialMessage = command + ' ' + parameter + ' ' + string(value) + '\n'
-            logging.debug(serialMessage)
+            serialMessage = 'PUT MESSAGE HERE\n'
+            logging.debug('serialMessage: %s', serialMessage)
             serialComm.write(serialMessage.encode('utf-8'))
             
             while True:
