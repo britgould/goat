@@ -52,7 +52,8 @@ struct Message serialMessage;
 bool ParseMessage(String message) {
   int space1, space2;
   String commandString, parameterString;
-
+  
+  // the message must include command, parameter AND value
   // split the components of the message in the incoming string
   space1 = message.indexOf(" ");
   space2 = message.lastIndexOf(" ");
