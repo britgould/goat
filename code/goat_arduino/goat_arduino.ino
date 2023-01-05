@@ -198,38 +198,61 @@ bool ShutdownServos(void) {
 bool PerformCommand(Message message) {
   Serial.println("in PerformCommand()");
 
-  switch (message.parameter) {
-    case INITIALIZE:
-      InitializeServos();
-      break;
-    case SHUTDOWN:
-      ShutdownServos();
-      break;
-    case REST:
-      ServosToRestPositions();
-      break;
-    case UP:
-      // put arm straight up -- TO BE CODED
-      Serial.println("arm up NOT implemented yet");
-      break;
-    case WAIST:
-      ServoMoveTo(servoWaist, message.value);
-      break;
-    case SHOULDER:
-      ServoMoveTo(servoShoulder, message.value);
-      break;
-    case ELBOW:
-      ServoMoveTo(servoElbow, message.value);
-      break;
-    case WRIST:
-      ServoMoveTo(servoWrist, message.value);
-      break;
-    case TWIST:
-      ServoMoveTo(servoTwist, message.value);
-      break;
-    case GRAB:
-      ServoMoveTo(servoGrab, message.value);
-      break;
+  if (message.command == ARM) {
+    switch (message.parameter) {
+      case INITIALIZE:
+        InitializeServos();
+        break;
+      case SHUTDOWN:
+        ShutdownServos();
+        break;
+      case REST:
+        ServosToRestPositions();
+        break;
+      case UP:
+        // put arm straight up -- TO BE CODED
+        Serial.println("arm up NOT implemented yet");
+        break;
+      case WAIST:
+        ServoMoveTo(servoWaist, message.value);
+        break;
+      case SHOULDER:
+        ServoMoveTo(servoShoulder, message.value);
+        break;
+      case ELBOW:
+        ServoMoveTo(servoElbow, message.value);
+        break;
+      case WRIST:
+        ServoMoveTo(servoWrist, message.value);
+        break;
+      case TWIST:
+        ServoMoveTo(servoTwist, message.value);
+        break;
+      case GRAB:
+        ServoMoveTo(servoGrab, message.value);
+        break;
+    }
+  } else if (message.command == ARMPW) {
+    switch (message.parameter) {
+      case WAIST:
+        servoWaist.writeMicroseconds(message.value);
+        break;
+      case SHOULDER:
+        servoShoulder.writeMicroseconds(message.value);
+        break;
+      case ELBOW:
+        servoElbow.writeMicroseconds(message.value);
+        break;
+      case WRIST:
+        servoWrist.writeMicroseconds(message.value);
+        break;
+      case TWIST:
+        servoTwist.writeMicroseconds(message.value);
+        break;
+      case GRAB:
+        servoGrab.writeMicroseconds(message.value);
+        break;
+    }
   }
 
   return true;
