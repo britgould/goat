@@ -84,5 +84,5 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(module)s : %(funcName)s : %(message)s',
                         level=logging.DEBUG)
     initialize()
-    move(0, 0, 65)
+    move(8, 27, 0)
     print('breakpoint here')
