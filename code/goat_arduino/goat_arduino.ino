@@ -23,22 +23,27 @@ bool servosInitialized = false;
 bool motorsInitialized = false;
 
 // initial servo positions
-struct ServoPositions {
-  int waist = 90;
-  int shoulder = 70;
-  int elbow = 0;
-  int wrist = 0;
-  int twist = 90;
-  int grab = 90;
+struct ServoDegrees {
+  int waist;
+  int shoulder;
+  int elbow;
+  int wrist;
+  int twist;
+  int grab;
 };
 
-struct ServoPositions servoInitialPositions;
+struct ServoDegrees servoInitialPositions;
+struct ServoDegrees servoOffsets;
+
+#define GRAB_OPEN_POS 140
+#define GRAB_TP_ROLL_POS 87
+#define GRAB_CLOSE_POS 70
 
 // communications variables for incoming serial data
 String serialData;
 
 typedef enum {NO_COMMAND, ARM, ARMPW, MOVE} COMMAND;
-typedef enum {NO_PARAMETER, INITIALIZE, SHUTDOWN, REST, UP, WAIST, SHOULDER, ELBOW, WRIST, TWIST, GRAB, FORWARD, BACKWARD, LEFT, RIGHT, ROTATERIGHT, ROTATELEFT} PARAMETER;
+typedef enum {NO_PARAMETER, INITIALIZE, SHUTDOWN, REST, UP, WAIST, SHOULDER, ELBOW, WRIST, TWIST, GRAB, GRAB_OPEN, GRAB_TP_ROLL, GRAB_CLOSE, FORWARD, BACKWARD, LEFT, RIGHT, ROTATERIGHT, ROTATELEFT} PARAMETER;
 
 struct Message {
   COMMAND command = NO_COMMAND;
@@ -97,6 +102,12 @@ bool ParseMessage(String message) {
           serialMessage.parameter = TWIST;
         } else if (parameterString == "grab") {
           serialMessage.parameter = GRAB;
+        } else if (parameterString == "grab_open") {
+          serialMessage.parameter = GRAB_OPEN;
+        } else if (parameterString == "grab_tp_roll") {
+          serialMessage.parameter = GRAB_TP_ROLL;
+        } else if (parameterString == "grab_close") {
+          serialMessage.parameter = GRAB_CLOSE;
         } else {
           Serial.println("ERROR: Command:" + commandString + ", invalid parameter:" + parameterString);
           return false;
@@ -129,6 +140,12 @@ bool ParseMessage(String message) {
 }
 
 int ServoMoveTo(Servo servo, int newPos) {
+  if (newPos < 0) {
+    newPos = 0;
+  } else if (newPos > 180) {
+    newPos = 180;
+  }
+  
   if (servo.read() == SERVO_NOT_INITIALIZED) {
     servo.write(newPos);  // move servo
   } else {
@@ -147,6 +164,20 @@ int ServoMoveTo(Servo servo, int newPos) {
 
 bool InitializeServos(void) {
   if (!servosInitialized) {
+    servoOffsets.waist = 10;
+    servoOffsets.shoulder = 14;
+    servoOffsets.elbow = -4;
+    servoOffsets.wrist = 2;
+    servoOffsets.twist = -20;
+    servoOffsets.grab = 0;
+
+    servoInitialPositions.waist = 90 + servoOffsets.waist;
+    servoInitialPositions.shoulder = 70 + servoOffsets.shoulder;
+    servoInitialPositions.elbow = 0 + servoOffsets.elbow;
+    servoInitialPositions.wrist = 0 + servoOffsets.wrist;
+    servoInitialPositions.twist = 90 + servoOffsets.twist;
+    servoInitialPositions.grab = GRAB_OPEN_POS;
+  
     // attach servos
     servoWaist.attach(SERVO_WAIST_PIN, 500, 2400);
     servoWaist.write(servoInitialPositions.waist);
@@ -174,7 +205,17 @@ void ServosToRestPositions(void) {
   ServoMoveTo(servoElbow, servoInitialPositions.elbow);
   ServoMoveTo(servoWrist, servoInitialPositions.wrist);
   ServoMoveTo(servoTwist, servoInitialPositions.twist);
-  ServoMoveTo(servoGrab, servoInitialPositions.grab);
+  ServoMoveTo(servoGrab, GRAB_OPEN_POS);
+  return;  
+}
+
+void ServosToUpPositions(void) {
+  ServoMoveTo(servoWaist, 90 + servoOffsets.waist);
+  ServoMoveTo(servoShoulder, 90 + servoOffsets.shoulder);
+  ServoMoveTo(servoElbow, 90 + servoOffsets.elbow);
+  ServoMoveTo(servoWrist, 90 + servoOffsets.wrist);
+  ServoMoveTo(servoTwist, 90 + servoOffsets.twist);
+  ServoMoveTo(servoGrab, GRAB_OPEN_POS);
   return;  
 }
 
@@ -210,26 +251,34 @@ bool PerformCommand(Message message) {
         ServosToRestPositions();
         break;
       case UP:
-        // put arm straight up -- TO BE CODED
-        Serial.println("arm up NOT implemented yet");
+        ServosToUpPositions();
         break;
       case WAIST:
-        ServoMoveTo(servoWaist, message.value);
+        ServoMoveTo(servoWaist, message.value + servoOffsets.waist);
         break;
       case SHOULDER:
-        ServoMoveTo(servoShoulder, message.value);
+        ServoMoveTo(servoShoulder, message.value + servoOffsets.shoulder);
         break;
       case ELBOW:
-        ServoMoveTo(servoElbow, message.value);
+        ServoMoveTo(servoElbow, message.value + servoOffsets.elbow);
         break;
       case WRIST:
-        ServoMoveTo(servoWrist, message.value);
+        ServoMoveTo(servoWrist, message.value + servoOffsets.wrist);
         break;
       case TWIST:
-        ServoMoveTo(servoTwist, message.value);
+        ServoMoveTo(servoTwist, message.value + servoOffsets.twist);
         break;
       case GRAB:
-        ServoMoveTo(servoGrab, message.value);
+        ServoMoveTo(servoGrab, message.value + servoOffsets.grab);
+        break;
+      case GRAB_OPEN: 
+        ServoMoveTo(servoGrab, GRAB_OPEN_POS);
+        break;
+      case GRAB_TP_ROLL:
+        ServoMoveTo(servoGrab, GRAB_TP_ROLL_POS);
+        break;
+      case GRAB_CLOSE:
+        ServoMoveTo(servoGrab, GRAB_TP_ROLL_POS);
         break;
     }
   } else if (message.command == ARMPW) {
@@ -280,16 +329,5 @@ void loop() {
     if (messageParsedSuccessfully) {
       PerformCommand(serialMessage);
     }
-
-/*
-    if (serialData.startsWith("us")) {
-      servo1.writeMicroseconds(serialData.substring(2).toInt());
-      Serial.println("Servo microseconds set");
-    } else {
-      servoPosRequested = serialData.toInt(); // convert the position input to an int
-      servo1Pos = ServoMoveTo(servo1, servoPosRequested);
-      Serial.println("Servo set to " + String(servo1Pos) + " degrees"); // report out through the serial line  
-    }
-*/
   }
 }
