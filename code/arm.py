@@ -37,6 +37,7 @@ def doInverseKinematics():
     global inverseKinematics
     global target_position
     global target_orientation
+    global armJointPositions
     
 #    old_position = inverseKinematics.copy()
     inverseKinematics = my_chain.inverse_kinematics(target_position,
@@ -44,7 +45,8 @@ def doInverseKinematics():
                                                     orientation_mode="all") #,
                                                     #initial_position=old_position)
     
-    debugString = "The angles of each joints are : ", list(map(lambda r:math.degrees(r),inverseKinematics.tolist()))
+    armJointPositions = list(map(lambda r:math.degrees(r),inverseKinematics.tolist()))
+    debugString = "The angles of each joints are : ", armJointPositions
     logging.debug(debugString)
     
     computed_position = my_chain.forward_kinematics(inverseKinematics)
@@ -67,10 +69,12 @@ def updatePlot():
 
 def move(x, y, z):
     global target_position
+    global armJointPositions
 
     target_position = [x, y, z]
     doInverseKinematics()
     updatePlot()
+    
     
     # ADD: send move command to Arduino
 
@@ -85,5 +89,5 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(module)s : %(funcName)s : %(message)s',
                         level=logging.DEBUG)
     initialize()
-    move(8, 27, 0)
+    move(0, 40, 0)
     print('breakpoint here')
