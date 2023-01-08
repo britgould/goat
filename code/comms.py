@@ -6,7 +6,7 @@
 import serial
 import logging
 
-STUB_COMMS_FOR_DEBUG = True
+STUB_COMMS_FOR_DEBUG = False
 
 def initialize():
     logging.debug('comms initializing...')
@@ -32,19 +32,19 @@ def sendCommand(command, parameter, value):
             logging.critical('serialComm is not open')
             return False
         else:
-            serialMessage = 'PUT MESSAGE HERE\n'
+            serialMessage = command + ' ' + parameter + ' ' + str(value) + '\n'
             logging.debug('serialMessage: %s', serialMessage)
             serialComm.write(serialMessage.encode('utf-8'))
-            
-            while True:
-                while serialComm.inWaiting() == 0: pass
-                if serialComm.inWaiting() > 0:
-                    response = serialComm.readline().decode('utf-8').rstrip()
-                    logging.debug('serial response: %s', response)
-                    if response == 'OK':
-                        return True
-                    else:
-                        logging.info('Arduino says: %s', response)
+        return True  
+#             while True:
+#                 while serialComm.inWaiting() == 0: pass
+#                 if serialComm.inWaiting() > 0:
+#                     response = serialComm.readline().decode('utf-8').rstrip()
+#                     logging.debug('serial response: %s', response)
+#                     if response == 'OK':
+#                         return True
+#                     else:
+#                         logging.info('Arduino says: %s', response)
                 
 def shutdown():
     logging.debug('comms shutting down...')

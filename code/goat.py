@@ -9,7 +9,7 @@ import logging
 
 import detect
 import comms
-#import arm
+import arm
 import motion
 
 logging.basicConfig(format='%(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.DEBUG)
@@ -23,9 +23,9 @@ def initialize():
     if not comms.initialize():
         logging.critical('comms failed to initialize.')
         sys.exit('Initialization failure')
-#    if not arm.initialize():
-#        logging.critical('arm failed to initialize.')
-#        sys.exit('Initialization failure')
+    if not arm.initialize():
+        logging.critical('arm failed to initialize.')
+        sys.exit('Initialization failure')
     if not motion.initialize():
         logging.critical('motion failed to initialize.')
         sys.exit('Initialization failure')
@@ -35,7 +35,7 @@ def initialize():
 def shutdown():
     logging.debug('GOAT shuting down...')
     motion.shutdown()
-#    arm.shutdown()
+    arm.shutdown()
     comms.shutdown()
     detect.shutdown()
     logging.debug('GOAT shutdown complete.')

@@ -31,6 +31,7 @@ def initialize():
     fig, ax = plot_utils.init_3d_figure()
 
     # send initialize command to Arduino
+    comms.sendCommand('arm', 'initialize', 0)
 
 def doInverseKinematics():
     global inverseKinematics
@@ -75,7 +76,7 @@ def move(x, y, z):
 
 def shutdown():
     logging.debug('arm shutting down...')
-
+    comms.sendCommand('arm', 'shutdown', 0)
     logging.info('arm shut down complete.')
 
 
