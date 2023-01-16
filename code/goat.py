@@ -45,6 +45,10 @@ def runGoat():
     while True:
         detectionResult = detect.detectTrash()
     
+        move(-8.5, 28, 0)
+        grabTpRoll()
+        dump()
+        armUp()
 
 def main():
     try:

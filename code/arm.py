@@ -75,8 +75,47 @@ def move(x, y, z):
     doInverseKinematics()
     updatePlot()
     
-    
     # ADD: send move command to Arduino
+    # start with the waist
+    waistAngle = armJointPositions[1]
+    if 0 <= waistAngle <= 90:
+        pass
+    elif -90 <= waistAngle < 0:
+        waistAngle = waistAngle + 180
+
+    shoulderAngle = armJointPositions[2]
+    shoulderAngle = abs(shoulderAngle)
+    shoulderAngle = 90 - shoulderAngle
+
+    elbowAngle = armJointPositions[3]
+    elbowAngle = abs(elbowAngle)
+    elbowAngle = elbowAngle + 90
+   
+    wristAngle = armJointPositions[4]
+    wristAngle = abs(wristAngle)
+    wristAngle = 90 - wristAngle
+    
+    comms.sendCommand('arm', 'waist', waistAngle)
+    comms.sendCommand('arm', 'wrist', wristAngle)
+    comms.sendCommand('arm', 'elbow', elbowAngle)
+    comms.sendCommand('arm', 'shoulder', shoulderAngle)
+    
+def grabTpRoll():
+    comms.sendCommand('arm', 'grab_tp_roll', 0)
+
+def grabClose():
+    comms.sendCommand('arm', 'grab_close', 0)
+    
+def grabOpen():
+    comms.sendCommand('arm', 'grab_open', 0)
+    
+def armUp():
+    comms.sendCommand('arm', 'up', 0)
+    
+def dump():
+    comms.sendCommand('arm', 'up', 0)
+    comms.sendCommand('arm', 'elbow', 0)
+    grabOpen()
 
 def shutdown():
     logging.debug('arm shutting down...')
@@ -88,6 +127,10 @@ def shutdown():
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(module)s : %(funcName)s : %(message)s',
                         level=logging.DEBUG)
+    comms.initialize()
     initialize()
-    move(0, 40, 0)
+    move(-8.5, 28, 0)
+    grabTpRoll()
+    dump()
+    armUp()
     print('breakpoint here')

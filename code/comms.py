@@ -35,16 +35,15 @@ def sendCommand(command, parameter, value):
             serialMessage = command + ' ' + parameter + ' ' + str(value) + '\n'
             logging.debug('serialMessage: %s', serialMessage)
             serialComm.write(serialMessage.encode('utf-8'))
-        return True  
-#             while True:
-#                 while serialComm.inWaiting() == 0: pass
-#                 if serialComm.inWaiting() > 0:
-#                     response = serialComm.readline().decode('utf-8').rstrip()
-#                     logging.debug('serial response: %s', response)
-#                     if response == 'OK':
-#                         return True
-#                     else:
-#                         logging.info('Arduino says: %s', response)
+            while True:
+                while serialComm.inWaiting() == 0: pass
+                if serialComm.inWaiting() > 0:
+                    response = serialComm.readline().decode('utf-8').rstrip()
+                    logging.debug('serial response: %s', response)
+                    if response == 'OK':
+                        return True
+                    else:
+                        logging.info('Arduino says: %s', response)
                 
 def shutdown():
     logging.debug('comms shutting down...')

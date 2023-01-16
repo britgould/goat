@@ -210,12 +210,12 @@ void ServosToRestPositions(void) {
 }
 
 void ServosToUpPositions(void) {
-  ServoMoveTo(servoWaist, 90 + servoOffsets.waist);
   ServoMoveTo(servoShoulder, 90 + servoOffsets.shoulder);
   ServoMoveTo(servoElbow, 90 + servoOffsets.elbow);
   ServoMoveTo(servoWrist, 90 + servoOffsets.wrist);
   ServoMoveTo(servoTwist, 90 + servoOffsets.twist);
-  ServoMoveTo(servoGrab, GRAB_OPEN_POS);
+  ServoMoveTo(servoWaist, 90 + servoOffsets.waist);
+  //ServoMoveTo(servoGrab, GRAB_OPEN_POS);
   return;  
 }
 
@@ -328,6 +328,7 @@ void loop() {
     
     if (messageParsedSuccessfully) {
       PerformCommand(serialMessage);
+      Serial.println("OK");
     }
   }
 }
