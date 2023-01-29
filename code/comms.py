@@ -43,7 +43,7 @@ def sendCommand(command, parameter, value):
                     if response == 'OK':
                         return True
                     else:
-                        logging.info('Arduino says: %s', response)
+                        logging.debug('Arduino says: %s', response)
                 
 def shutdown():
     logging.debug('comms shutting down...')

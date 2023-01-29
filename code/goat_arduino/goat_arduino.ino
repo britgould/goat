@@ -172,7 +172,7 @@ bool InitializeServos(void) {
     servoOffsets.grab = 0;
 
     servoInitialPositions.waist = 90 + servoOffsets.waist;
-    servoInitialPositions.shoulder = 70 + servoOffsets.shoulder;
+    servoInitialPositions.shoulder = 60 + servoOffsets.shoulder;
     servoInitialPositions.elbow = 0 + servoOffsets.elbow;
     servoInitialPositions.wrist = 0 + servoOffsets.wrist;
     servoInitialPositions.twist = 90 + servoOffsets.twist;

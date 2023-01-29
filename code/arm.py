@@ -32,6 +32,8 @@ def initialize():
 
     # send initialize command to Arduino
     comms.sendCommand('arm', 'initialize', 0)
+    
+    return True
 
 def doInverseKinematics():
     global inverseKinematics

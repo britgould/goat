@@ -10,6 +10,7 @@
 #import argparse
 import sys
 import logging
+import time
 
 import cv2
 from tflite_support.task import core
@@ -52,12 +53,15 @@ def detectTrash():
     # Continuously capture images from the camera and run inference
     global cap
     if cap.isOpened():
-        success, image = cap.read()
+        success, cameraImage = cap.read()
         if not success:
             logging.critical('Cannot read from webcam.')
             sys.exit('ERROR: Cannot read from webcam.')
 
         #image = cv2.flip(image, 1)
+            
+#         image = cameraImage[465:1340, 225:720]
+        image = cameraImage[150:480, 310:893]
 
         # Convert the image from BGR to RGB as required by the TFLite model.
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -78,10 +82,11 @@ def detectTrash():
         cv2.putText(image, onImageText, textLocation, cv2.FONT_HERSHEY_PLAIN,
                     font_size, text_color, font_thickness)
 
+        cv2.imshow('object_detector', image)
         # Stop the program if the ESC key is pressed.
         if cv2.waitKey(1) == 27:
             sys.exit()
-        cv2.imshow('object_detector', image)
+        #time.sleep(5)
         
         return detection_result
     
