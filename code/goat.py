@@ -14,25 +14,35 @@ import comms
 import arm
 import motion
 
+codeDirectory = '/home/pi/Documents/goat/code/'
+
 logging.basicConfig(format='%(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
 
 
 def initialize():
+    global codeDirectory
     logging.debug('GOAT initializing...')
+
+    detect.codeDirectory = codeDirectory
 #     if detect.initialize():
 #         detect.detectTrash()
 #     else:
 #         logging.critical('detect failed to initialize.')
 #         sys.exit('Initialization failure')
+
     if not comms.initialize():
         logging.critical('comms failed to initialize.')
         sys.exit('Initialization failure')
+
+    arm.codeDirectory = codeDirectory
     if not arm.initialize():
         logging.critical('arm failed to initialize.')
         sys.exit('Initialization failure')
+    
     if not motion.initialize():
         logging.critical('motion failed to initialize.')
         sys.exit('Initialization failure')
+    
     logging.info('GOAT initialized.')
 
 
@@ -88,6 +98,7 @@ def runGoat():
         
         detect.shutdown()
         
+        # Check if switch was turned off
         global shutdownPin
         if GPIO.input(shutdownPin):
             return
@@ -95,8 +106,10 @@ def runGoat():
 def main():
     global shutdownPin
     try:
+        logging.info('GOAT starting up...')
+        
         # Wait for switch to be turned on
-        shutdownPin = 4
+        shutdownPin = 23
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(shutdownPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         while GPIO.input(shutdownPin):
@@ -111,6 +124,8 @@ def main():
         # Check if we should shutdown the Raspberry Pi
         if GPIO.input(shutdownPin):
             os.system('sudo systemctl poweroff') 
+
+        GPIO.cleanup()
 
 if __name__ == '__main__':
     main()

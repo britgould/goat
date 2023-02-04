@@ -18,6 +18,7 @@ from tflite_support.task import processor
 from tflite_support.task import vision
 import utils
 
+codeDirectory = ''
 
 def initialize():
     logging.debug('detect initializing...')
@@ -30,7 +31,7 @@ def initialize():
 
     # Initialize the object detection model
     base_options = core.BaseOptions(
-        file_name='../detection/trash.tflite', use_coral=False, num_threads=4)
+        file_name=codeDirectory+'../detection/trash.tflite', use_coral=False, num_threads=4)
     detection_options = processor.DetectionOptions(
         max_results=3, score_threshold=0.3)
     options = vision.ObjectDetectorOptions(

@@ -15,12 +15,13 @@ import math
 
 import ipywidgets as widgets
 
+codeDirectory = ''
 
 def initialize():
     logging.debug('arm initializing...')
 
     global my_chain
-    my_chain = ikpy.chain.Chain.from_urdf_file("goat_arm.urdf",
+    my_chain = ikpy.chain.Chain.from_urdf_file(codeDirectory + "goat_arm.urdf",
                                                active_links_mask=[False, True, True, True, True, True, True])
 
     global target_orientation
