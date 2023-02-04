@@ -6,6 +6,8 @@
 import sys
 import time
 import logging
+import RPi.GPIO as GPIO
+import os
 
 import detect
 import comms
@@ -44,6 +46,8 @@ def shutdown():
 
 
 def runGoat():
+    arm.armUp()
+    
     while True:
         detect.initialize()
         
@@ -84,13 +88,29 @@ def runGoat():
         
         detect.shutdown()
         
+        global shutdownPin
+        if GPIO.input(shutdownPin):
+            return
+        
 def main():
+    global shutdownPin
     try:
+        # Wait for switch to be turned on
+        shutdownPin = 4
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(shutdownPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        while GPIO.input(shutdownPin):
+            time.sleep(1)
+            
         initialize()
         runGoat()
 
     finally:
         shutdown()
+        
+        # Check if we should shutdown the Raspberry Pi
+        if GPIO.input(shutdownPin):
+            os.system('sudo systemctl poweroff') 
 
 if __name__ == '__main__':
     main()
