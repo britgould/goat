@@ -1,6 +1,4 @@
-# Copyright 2022 Raquel Gould and Abi Sullivan. All Rights Reserved.
-#
-# Licensed under ...
+# Copyright 2022-2023 Raquel Gould and Abi Sullivan. All Rights Reserved.
 #
 
 import serial

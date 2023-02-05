@@ -1,8 +1,5 @@
 /*
- GOAT STEM Project
- by Raquel G and Abi S, assisted by Brit G.
-
- ADD URL to GitHub
+  Copyright 2022-2023 Raquel Gould and Abi Sullivan. All Rights Reserved.
 */
 
 #include <Servo.h>
