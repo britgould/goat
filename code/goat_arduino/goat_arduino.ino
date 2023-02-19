@@ -3,6 +3,7 @@
 */
 
 #include <Servo.h>
+#include <AccelStepper.h>
 
 #define SERVO_WAIST_PIN 22
 #define SERVO_SHOULDER_PIN 24
@@ -233,6 +234,31 @@ bool ShutdownServos(void) {
   return true;
 }
 
+// Define the stepper motors and the pins the will use
+AccelStepper LeftBackWheel(1, 2, 5);   // (Type:driver, STEP, DIR) - Stepper1
+AccelStepper LeftFrontWheel(1, 3, 6);  // Stepper2
+AccelStepper RightBackWheel(1, 4, 7);  // Stepper3
+AccelStepper RightFrontWheel(1, 12, 13); // Stepper4
+
+int wheelSpeed = 1500;
+
+void moveForward(int value) {
+  int i; 
+  
+  LeftFrontWheel.setSpeed(wheelSpeed);
+  LeftBackWheel.setSpeed(wheelSpeed);
+  RightFrontWheel.setSpeed(wheelSpeed);
+  RightBackWheel.setSpeed(wheelSpeed);
+
+  // Execute the steps
+  for (i = 0; i < value; i = i + 1) {
+    LeftFrontWheel.runSpeed();
+    LeftBackWheel.runSpeed();
+    RightFrontWheel.runSpeed();
+    RightBackWheel.runSpeed();
+  }
+}
+
 bool PerformCommand(Message message) {
   Serial.println("in PerformCommand()");
 
@@ -299,6 +325,12 @@ bool PerformCommand(Message message) {
         servoGrab.writeMicroseconds(message.value);
         break;
     }
+  } else if (message.command == MOVE) {
+    switch (message.parameter) {
+      case FORWARD:
+        moveForward(message.value);
+        break;
+    }
   }
 
   return true;
@@ -309,6 +341,13 @@ void setup() {
   Serial.begin(9600);
   Serial.println("");
   Serial.println("Setup complete");
+/*
+  // Set initial seed values for the steppers
+  LeftFrontWheel.setMaxSpeed(3000);
+  LeftBackWheel.setMaxSpeed(3000);
+  RightFrontWheel.setMaxSpeed(3000);
+  RightBackWheel.setMaxSpeed(3000);
+*/
 }
 
 void loop() {
